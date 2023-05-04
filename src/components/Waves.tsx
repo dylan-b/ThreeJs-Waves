@@ -5,10 +5,10 @@ import { createNoise3D, createNoise2D } from "simplex-noise";
 
 const Waves = () => {
   const mesh: any = useRef<Mesh>();
-  const noise3D_1 = createNoise3D();
-  const noise3D_2 = createNoise3D();
-  const noise2D_1 = createNoise2D();
-  const noise2D_2 = createNoise2D();
+  const primaryNoise3D = createNoise3D();
+  const secondaryNoise3D = createNoise3D();
+  const primaryNoise2D = createNoise2D();
+  const secondaryNoise2D = createNoise2D();
 
   const geometry = useMemo(() => {
     return new PlaneGeometry(50, 50, 100, 100);
@@ -44,39 +44,39 @@ const Waves = () => {
       );
 
       const time = state.clock.elapsedTime * 0.2;
-      const noiseFactor_1 = 16;
-      const noiseFactor_2 = 16;
-      const waveAmplitude_1 = 0.5;
-      const waveAmplitude_2 = 0.7;
+      const primaryNoise = 16;
+      const secondaryNoise = 16;
+      const primaryWaveAmp = 0.5;
+      const secondaryWaveAmp = 0.7;
 
-      const noiseValue_1 = noise3D_1(
-        newPosition.x / noiseFactor_1,
-        newPosition.y / noiseFactor_1,
-        newPosition.z / noiseFactor_1 + time
+      const primaryNoise3DValue = primaryNoise3D(
+        newPosition.x / primaryNoise,
+        newPosition.y / primaryNoise,
+        newPosition.z / primaryNoise + time
       );
 
-      const noiseValue_2 = noise3D_2(
-        newPosition.x / noiseFactor_2,
-        newPosition.y / noiseFactor_2,
-        newPosition.z / noiseFactor_2 + time * 0.8
+      const secondaryNoise3DValue = secondaryNoise3D(
+        newPosition.x / secondaryNoise,
+        newPosition.y / secondaryNoise,
+        newPosition.z / secondaryNoise + time * 0.8
       );
 
-      const noiseValue_3 = noise2D_1(
-        newPosition.x / 6 + time * 0.5,
-        newPosition.y / 6 + time * 0.5
-      );
-
-      const noiseValue_4 = noise2D_2(
+      const primaryNoise2DValue = primaryNoise2D(
         newPosition.x / 10 + time * 0.5,
         newPosition.y / 10 + time * 0.5
       );
 
+      const secondaryNoise2DValue = secondaryNoise2D(
+        newPosition.x / 5 + time * 0.5,
+        newPosition.y / 5 + time * 0.5
+      );
+
       newPosition.z =
         initialPosition.z +
-        (noiseValue_1 * waveAmplitude_1 +
-          noiseValue_2 * waveAmplitude_2 +
-          noiseValue_3 * waveAmplitude_1 +
-          noiseValue_4 * waveAmplitude_2);
+        (primaryNoise3DValue * primaryWaveAmp +
+          secondaryNoise3DValue * secondaryWaveAmp +
+          primaryNoise2DValue * primaryWaveAmp +
+          secondaryNoise2DValue * secondaryWaveAmp);
 
       positionAttribute.setXYZ(i, newPosition.x, newPosition.y, newPosition.z);
     }
